@@ -16,3 +16,6 @@
 발표하신 내용을 저장소에 공유해주세요. 파일은 `markdown`으로 작성해주세요.  
 `markdown` 형식은 자유롭게 작성해주셔도 되지만, 어려우시다면 `/sample`에 있는 `template`을 사용해주세요.  
 
+## TODO
+
+[] gatsby blog porting
