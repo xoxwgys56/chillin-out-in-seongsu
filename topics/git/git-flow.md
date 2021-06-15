@@ -68,6 +68,8 @@ $ git checkout -b develop
 
 개발이 적용된 사항을 커밋하고, `develop` 브랜치에 푸시합니다.
 
+> 이 곳에서 다루는 `develop` 브랜치는 새로운 코드를 적용하기 위한 개발 브랜치라는 의미로 사용되었습니다.
+
 ```shell
 $ git add src
 $ git commit
@@ -117,10 +119,13 @@ $ git push --set-upstream origin develop
 
 Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Merge된 브랜치를 삭제할 것인지 물어봅니다. 이 예시에서는 삭제하지 않을 것 입니다.  
 
+> 다시 2개의 브랜치가 같은 내용을 공유하게 되었습니다. 이 과정에서는 unittest가 생략되었기 때문에 브랜치 병합(Merge)가 너무 쉽게 이뤄졌습니다. 이렇게 개발한다면 굳이 브랜치를 나눠 쓸 필요 없습니다.
+
+여기까지 다룬 내용이 github flow에 관한 내용이었습니다. 소규모팀의 개발이라면 이 정도의 내용으로도 충분합니다.  
+이 다음 내용에서 git flow와 브랜치 이름을 `develop`으로 설정한 이유에 대해 알아보겠습니다.
 
 
-
-## 그래서 무엇인가?
+## 그래서 git flow란 무엇인가?
 
 [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/)이라는 [Vincent Driessen](https://nvie.com/about/)이 작성한 블로그에서 처음 소개된 개념이라고 알려져 있습니다.  
 아래의 사진이 git flow를 나타낸 그림으로 유명합니다.
@@ -130,11 +135,64 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 >
 > > I would suggest to adopt a much simpler workflow (like GitHub flow) instead of trying to shoehorn git-flow into your team.
 
+
+위의 예시에서 우리는 `develop` 브랜치를 생성하여 기능을 구현하고 `PR`을 생성해 Merge하였습니다. 이러한 과정을 거친 이유는 아래와 같습니다.  
+
+### 우리는 혼자서 개발하지 않기 때문입니다. 다른 사람과 함께 개발할 것 입니다.
+
+다른 사람과 개발한다는 말은 여러 의미를 담고 있습니다. `name convention`, `programming lagnuage`, `dependencies` etc..  
+예시 저장소에서 `develop` 브랜치는 혼자 사용했습니다. 하지만 개발을 하다보면 여러 사람이 함께 개발과정에 참여하게 되고 `develop` 브랜치 또한 공유하게 됩니다.  
+
+![Decentralized but centralized](https://nvie.com/img/centr-decentr@2x.png)
+
+개발자들은 각각의 로컬 기기에서 개발을 하게 될 것 입니다. (Mac이든 Windows든 Ubuntu든 뭐든지요!) 로컬 환경에서 개발된 코드는 각자의 검증과정(unittest든 가상환경 테스트든 뭐든지! 안하는건 조금 별로다!)을 통해 각 브랜치 내에서 커밋을 생성하고 push할 것 입니다.  
+
+> 각각의 브랜치 이름은 사람 이름보단 기능명 혹은 담당하고 있는 내용으로 표현하는 것이 좋을 것 같습니다. 이 글에서는 이것을 `feature` 브랜치라고 부르겠습니다.
+
+이렇게 개발된 코드들이 `develop` 브랜치에 병합(Merge)되어야 하는 순간이 발생합니다.  
+
+> 기능이 다 구현되어 병합하는 경우도 있고, `develop` 브랜치에서 테스트해야하기 때문에 병합할 수도 있습니다. 이유는 각자 다른 것 입니다.
+
+그리고 병합된 커밋들은 `develop` 브랜치에 누적되게 됩니다. 이렇게 점진적으로 개발하다보면 어느새 향상된 개발 버전의 프로그램이 구현되겠군요. (그러면 좋겠다.)  
+
+### 요청사항이 생겼다.
+
+> 이 부분에 대한 실습은 생략되어 있습니다. 추후 구현하면 추가할게요!
+
+팀이 커지면서 새로운 요청사항이 생겼습니다. 바로 `QA`(Quality Assuarance)가 필요해졌습니다. 이제 사업팀에서 개발된 기능을 테스트하고 싶어합니다.  
+앞에서 우리는 `develop` 브랜치에서 구현된 기능을 바로 `main` 브랜치로 병합했습니다. 하지만 이것은 개발 내 테스트만 완료되었기 때문에 불안정할 수 있습니다. (유저가 우리 프로그램으로 뭘 할지 모르잖아요...) 우리는 사용자를 대신하여 사업팀에서 테스트를 할 수 있도록 설계해야 합니다.
+
+사업팀에서 `QA`를 하기 위한 브랜치를 우리는 `test` 브랜치라고 부르기로 했습니다. (누군가는 `staging`라고 부를 수도 있습니다.) 우리는 `develop` 브랜치에서 개발자들에 의해 테스트가 완료된 코드를 `test` 브랜치에 올려 `QA`가 가능하도록 구성하도록 했습니다.
+
+### 그렇구나
+
+이 과정을 통해 개발 코드가 어떻게 상용화 버전까지 이동하는지 알 수 있습니다.  
+
+1. 로컬 환경에서 개발한 다음 각자의 브랜치에 커밋을 생성합니다.
+   1. `feature/apply-materialize-cdn`이라고 하겠습니다.
+2. 구현이 완료된 코드를 `develop` 브랜치로 `PR`을 생성합니다.
+   1. reviewer를 설정한다면 더 좋겠네요. (추가 할 사람이 있어야 하는데...)
+3. `develop` 브랜치에 도착한 코드는 `develop` 환경에서 테스트됩니다. 만약 문제가 없다면, `test` 브랜치로 `PR`을 생성합니다.
+4. `test` 브랜치로 옮겨진 코드는 사업팀에 의해 `QA`를 하게 됩니다.
+5. 문제가 없는 코드라면 상용화 버전으로 옮겨도 되겠네요. 언제 상용화 버전으로 옮길지는 사업팀에서 결정할 것 입니다. 이 예시의 경우 `main` 브랜치로 이동될 것 입니다.
+
+
 ![git flow](https://nvie.com/img/git-model@2x.png)
 
 ## 회사에서 어떻게 쓰고 있는가?
 
-dev, test, production
+현재 회사에서는 아래의 3개의 브랜치를 사용하고 있습니다.
+`dev`, `test`, `release-*`
+
+> `release-*`은 `release-0.0.1`, `release-1.3.19`등의 release version number를 의미합니다.
+
+위에서 언급한 것처럼 `test`에서 `QA`가 이뤄지면 좋겠지만.. 현재는 진행하지 않고 있습니다.  
+
+### 웹 기반
+
+우리 서비스는 웹 기반으로 동작하는 서비스입니다. front-back-client가 엮여있는 관계인데, front에서 명령을 하면, back을 통해 client가 동작하는 형태입니다.  
+
+이 동작을 테스트하기 위해 2개의 도메인이 존재합니다. `dev`, `beta`(=`release`)의 도메인이 있으며, `dev`는 테스트용으로 사용하기 때문에 프로젝트 생성 수 제한이 다르게 설정되어 있습니다.
 
 ---
 
@@ -147,6 +205,7 @@ dev, test, production
   - https://danielkummer.github.io/git-flow-cheatsheet/index.ko_KR.html
   - https://jeong-pro.tistory.com/196
   - https://guides.github.com/introduction/flow/
+  - https://blog.ull.im/engineering/2019/06/25/git-workflow-for-ci-cd.html
 - example repo
   - https://github.com/xoxwgys56/gitflow-practice
 - git review
