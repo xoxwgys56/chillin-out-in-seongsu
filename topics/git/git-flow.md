@@ -9,16 +9,13 @@
 ### 다루지 않는 내용
 
 - what is git
-- git add
-- git commit
-- git merge
-- git rebase
+- git add, commit, merge, rebase
 - html
 
 ### 다루는 내용
 
 - git branch
-- pull request (also called, merge request)
+- pull request (also called, merge request in gitlab)
 - git flow (main topic !)
 
 ## git flow 무엇인가?
@@ -129,12 +126,15 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 
 [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/)이라는 [Vincent Driessen](https://nvie.com/about/)이 작성한 블로그에서 처음 소개된 개념이라고 알려져 있습니다.  
 아래의 사진이 git flow를 나타낸 그림으로 유명합니다.
-앞서 github flow를 먼저 다룬 이유는 `Vincent Driessen`가 권장하기 때문입니다.
+앞서 github flow를 먼저 다룬 이유는 `Vincent Driessen`가 소규모팀에 대해 github flow를 권장하기 때문입니다.
+
+![git flow](https://nvie.com/img/git-model@2x.png)
 
 > 그는 이렇게 말하고 있습니다.
->
-> > I would suggest to adopt a much simpler workflow (like GitHub flow) instead of trying to shoehorn git-flow into your team.
 
+```
+I would suggest to adopt a much simpler workflow (like GitHub flow) instead of trying to shoehorn git-flow into your team.
+```
 
 위의 예시에서 우리는 `develop` 브랜치를 생성하여 기능을 구현하고 `PR`을 생성해 Merge하였습니다. 이러한 과정을 거친 이유는 아래와 같습니다.  
 
@@ -155,14 +155,43 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 
 그리고 병합된 커밋들은 `develop` 브랜치에 누적되게 됩니다. 이렇게 점진적으로 개발하다보면 어느새 향상된 개발 버전의 프로그램이 구현되겠군요. (그러면 좋겠다.)  
 
-### 요청사항이 생겼다.
+### 브랜치를 더 분할하자.
 
-> 이 부분에 대한 실습은 생략되어 있습니다. 추후 구현하면 추가할게요!
+이 프로젝트에서 우리는 `jquery`를 적용하여 이름을 변경하는 기능을 개발하려고 합니다. 이 기능을 `apply-jquery`라는 브랜치에서 구현한 뒤 `develop`로 `PR`을 만들어서 적용할 것 입니다. 하지만 이 기능을 적용 후 사용자에 의해테스트하지 않아서 상용으로 넘기긴 불안합니다.  
 
-팀이 커지면서 새로운 요청사항이 생겼습니다. 바로 `QA`(Quality Assuarance)가 필요해졌습니다. 이제 사업팀에서 개발된 기능을 테스트하고 싶어합니다.  
-앞에서 우리는 `develop` 브랜치에서 구현된 기능을 바로 `main` 브랜치로 병합했습니다. 하지만 이것은 개발 내 테스트만 완료되었기 때문에 불안정할 수 있습니다. (유저가 우리 프로그램으로 뭘 할지 모르잖아요...) 우리는 사용자를 대신하여 사업팀에서 테스트를 할 수 있도록 설계해야 합니다.
+우리는 `QA`(Quality Assuarance)가 필요해졌습니다. 이제 사업팀에서 개발된 기능을 테스트하여 자체적으로 문제가 없다고 판단되면 이것을 상용화에 적용하기로 했습니다.  
 
-사업팀에서 `QA`를 하기 위한 브랜치를 우리는 `test` 브랜치라고 부르기로 했습니다. (누군가는 `staging`라고 부를 수도 있습니다.) 우리는 `develop` 브랜치에서 개발자들에 의해 테스트가 완료된 코드를 `test` 브랜치에 올려 `QA`가 가능하도록 구성하도록 했습니다.
+> 앞에서 우리는 `develop` 브랜치에서 구현된 기능을 바로 `main` 브랜치로 병합했습니다. 하지만 이것은 개발 내 테스트만 완료되었기 때문에 불안정할 수 있습니다. (유저가 우리 프로그램으로 뭘 할지 모르잖아요...) 우리는 사용자를 대신하여 사업팀에서 테스트를 할 수 있도록 설계해야 합니다.  
+
+사업팀에서 `QA`를 하기 위한 브랜치를 우리는 `test` 브랜치라고 부르기로 했습니다. (누군가는 `staging`라고 부를 수도 있습니다.) 우리는 `develop` 브랜치에서 개발자들에 의해 테스트가 완료된 코드를 `test` 브랜치에 올려 `QA`가 가능하도록 구성하도록 했습니다.  
+
+### QA 요청하자.
+
+> 이 예시에서는 사업팀에서 `QA`를 진행하는 것으로 가정되어 있습니다. 어디서 할지 등에 대한 세부 사항은 팀에 따라 다를 수 있습니다.
+
+현재 우리에겐 `test` 브랜치가 없습니다. `main` 브랜치를 base로 `test` 브랜치를 생성하겠습니다. (가장 안정된 코드를 사용해야하니까요) 그리고 다음에 `develop` 브랜치를 `test`로 병합하겠습니다. (사업팀이 이를 확인해줄거에요.)  
+병합하기 위해 `develop` 브랜치에서 `test` 브랜치로  `PR`을 만들어줄 것 입니다.
+
+![pr develop to test](./gh_pr_dev_to_test.png)
+
+이제 `PR`을 병합하면 `test` 브랜치를 통해 사업팀이 기능을 확인할 수 있을 것 입니다. 좋습니다. 잘진행되고 있군요.
+
+### 이렇게 개발을 하다니
+
+사업팀에서 답변이 왔습니다. `jquery`를 적용해 이름을 바꾸는 기능에 문제가 발견되었다고 합니다. 이름을 빈 칸으로 두면 아예 이름이 사라지는 것이 문제라고 합니다.  
+
+이것은 치명적인 문제가 아니고 이름을 비우는 것은 당연히 이름이 없는게 맞다고 생각했는데.. 사업팀은 동의하지 못하는 것 같습니다. 우리는 이 문제를 수정해 재반영하기로 했습니다.  
+
+> 여기서 `test` 브랜치의 `HEAD`를 이전으로 바꾸는 것은 다루지 않습니다.  
+> 또한 이 문제를 `issue`로 만드는 것도 다루지 않습니다.
+
+우리는 `develop` 브랜치에서 `fix-apply-jquery`라는 브랜치를 만들었습니다. (위에서 언급했듯이 이 시점에서 `apply-jquery`는 이미 합병되었습니다.)  
+기능을 수정하고, `develop`브랜치로 `PR`을 만들었습니다.  
+
+> input이 비어있을 경우 이름을 _John Doe_로 설정하도록 구현했습니다.
+
+이제 다시 `test` 브랜치로 이동합니다. 휴! 이제 사업팀이 만족하는군요.
+
 
 ### 그렇구나
 
@@ -177,12 +206,11 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 5. 문제가 없는 코드라면 상용화 버전으로 옮겨도 되겠네요. 언제 상용화 버전으로 옮길지는 사업팀에서 결정할 것 입니다. 이 예시의 경우 `main` 브랜치로 이동될 것 입니다.
 
 
-![git flow](https://nvie.com/img/git-model@2x.png)
 
 ## 회사에서 어떻게 쓰고 있는가?
 
 현재 회사에서는 아래의 3개의 브랜치를 사용하고 있습니다.
-`dev`, `test`, `release-*`
+`develop`, `test`, `release-*`
 
 > `release-*`은 `release-0.0.1`, `release-1.3.19`등의 release version number를 의미합니다.
 
@@ -192,7 +220,7 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 
 우리 서비스는 웹 기반으로 동작하는 서비스입니다. front-back-client가 엮여있는 관계인데, front에서 명령을 하면, back을 통해 client가 동작하는 형태입니다.  
 
-이 동작을 테스트하기 위해 2개의 도메인이 존재합니다. `dev`, `beta`(=`release`)의 도메인이 있으며, `dev`는 테스트용으로 사용하기 때문에 프로젝트 생성 수 제한이 다르게 설정되어 있습니다.
+이 동작을 테스트하기 위해 2개의 도메인이 존재합니다. `develop`, `beta`(=`release`)의 도메인이 있으며, `develop`는 테스트용으로 사용하기 때문에 프로젝트 생성 수 제한이 다르게 설정되어 있습니다.
 
 ---
 
@@ -211,3 +239,5 @@ Merge를 하고 나면 생성한 `PR`은 `Merged`로 표기됩니다. 또한 Mer
 - git review
   - https://github.com/im-d-team/Dev-Docs/issues/11
   - https://devlog-wjdrbs96.tistory.com/231
+- PR
+  - https://softwareengineering.stackexchange.com/questions/304921/is-it-better-to-start-a-pull-request-or-perform-a-local-merge-commit-on-master
