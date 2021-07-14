@@ -18,4 +18,4 @@
 
 ## TODO
 
-[ ] gatsby blog porting
+- [ ] gatsby blog porting
