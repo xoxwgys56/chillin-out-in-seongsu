@@ -15,8 +15,8 @@ Instruction
 ### 2. Generator 함수 - Yield, Xrange
 ### 3. FirstClass 함수
 ### 4. Closure 함수
-### 5. Coroutine 함수
-### 6. Decorator 함수
+### 5. Decorator 함수
+### 6. Coroutine 함수
 ### 7. Property - Access modifier (접근제어자)
 ### 출처
 ***
@@ -161,12 +161,12 @@ Yield 포함 함수
 >>- 0~ 9까지 순회하며 2로 나눈 나머지가 0이면 False, 1이면True이므로,  True인 값들만 리스트에 등록된다.
 >>- xrange 기능은 python2에서 제공되던 기능이다.
 >>- python3부터는 range, xrange가 통합되었다.
->>- xrange와 range의 차이도 generator의 맥락에 포함된다고 생각하
->>므로 range, xrange, generator도 글의 끝에서 비교를 할 것이다.
+>>- xrange와 range의 차이도 generator의 맥락에 포함된다고 생각하므로 range, xrange, generator도 글의 끝에서 비교를 할 것이다.
 						
 >>generator object로 생성할 때	
 >>    
->>     ( i for i in xrange(10) if i % 2)-> 
+>>     ( i for i in xrange(10) if i % 2)
+>>    
 Result : <generator object <genexpr> at 0x000002D15E298BA0>
 	
 #### Generator 동작 방식
